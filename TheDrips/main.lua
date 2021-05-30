@@ -107,8 +107,8 @@ function DripsMod:onUpdate(player)
 	if HoneyIShrunkTheKid.Room ~= nil and game:GetLevel():GetCurrentRoomIndex() ~= HoneyIShrunkTheKid.Room then
 	
 		-- Revert pill changes
-		player.SpriteScale = HoneyIShrunkTheKid.FormerScale
 		HoneyIShrunkTheKid.IsShrunk = false
+		player.SpriteScale = HoneyIShrunkTheKid.FormerScale
 		player:AddCacheFlags(CacheFlag.CACHE_SPEED)
 		player:EvaluateItems()
 		HoneyIShrunkTheKid.Room = nil
@@ -199,6 +199,7 @@ function ImAlwaysAngry.Proc(_PillEffect)
 		ImAlwaysAngry.BONUS_DAMAGE = ImAlwaysAngry.BONUS_DAMAGE + 3
 		ImAlwaysAngry.FormerScale = player.SpriteScale
 		player:SetColor(Color(0.0, 0.7, 0.0, 1.0, 0.0, 0.0, 0.0), 0, 0, false, false) -- (Color(Red, Green, Blue, Transparency, RedOffset, GreenOffset, BlueOffset), Duration(time), Priority(int), fadeOut(booleaen), share(boolean))
+		--player:GetEffects():AddCollectibleEffect(CollectibleType.COLLECTIBLE_LEO, false)
 	end
 	
 	ImAlwaysAngry.BONUS_DAMAGE = ImAlwaysAngry.BONUS_DAMAGE + 0.5
@@ -206,24 +207,21 @@ function ImAlwaysAngry.Proc(_PillEffect)
 	player.SpriteScale = player.SpriteScale + ImAlwaysAngry.SCALE -- Make Isaac Hulk out
 	player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
 	player:AddCacheFlags(CacheFlag.CACHE_RANGE) -- Not working currently
-	--player:GetEffects():AddCollectibleEffect(CollectibleType.COLLECTIBLE_LEO, false)
 	ImAlwaysAngry.IsAngry = true
 end
 
 DripsMod:AddCallback(ModCallbacks.MC_USE_PILL, ImAlwaysAngry.Proc, ImAlwaysAngry.ID)
 
 -- Honey, I Shrunk The Kid Proc Code
---[[function HoneyIShrunkTheKid.Proc(PillEffect)
+function HoneyIShrunkTheKid.Proc(PillEffect)
 
 	local player = game:GetPlayer(0)
+	HoneyIShrunkTheKid.Room = game:GetLevel():GetCurrentRoomIndex() -- Get current room that pill is used (always do this first!)
 	
 	if HoneyIShrunkTheKid.IsShrunk == false then -- Not taken the pill yet; save the player's DEFAULT size in case pill is taken more than once
 		HoneyIShrunkTheKid.FormerScale = player.SpriteScale -- Store the player's default size
 	end
 	
-	HoneyIShrunkTheKid.FormerScale = player.SpriteScale -- Set the player's last scale
-	HoneyIShrunkTheKid.IsShrunk = true
-	HoneyIShrunkTheKid.Room = game:GetLevel():GetCurrentRoomIndex() -- Get current room that pill is used
 	player:AddCacheFlags(CacheFlag.CACHE_SPEED)
 	
 	--Shrink player
@@ -233,9 +231,10 @@ DripsMod:AddCallback(ModCallbacks.MC_USE_PILL, ImAlwaysAngry.Proc, ImAlwaysAngry
 	
 	if player.SpriteScale > HoneyIShrunkTheKid.FormerScale - HoneyIShrunkTheKid then
 		player.SpriteScale = 0.25
-	end]]
+	end ]]
 	
-	player.SpriteScale = player.SpriteScale - Vector(0.25, 0.25)
+	player.SpriteScale = player.SpriteScale - HoneyIShrunkTheKid.SCALE
+	HoneyIShrunkTheKid.IsShrunk = true
 end 
 
-DripsMod:AddCallback(ModCallbacks.MC_USE_PILL, HoneyIShrunkTheKid.Proc, HoneyIShrunkTheKid.ID) ]]
+DripsMod:AddCallback(ModCallbacks.MC_USE_PILL, HoneyIShrunkTheKid.Proc, HoneyIShrunkTheKid.ID)
